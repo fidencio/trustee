@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kbs
+spec:
+  template:
+    spec:
+      containers:
+      - name: kbs
+        volumeMounts:
+        - name: token-cert
+          mountPath: /etc/intel-trust-authority-certs.txt
+          subPath: intel-trust-authority-certs.txt
+      volumes:
+      - name: token-cert
+        configMap:
+          name: ita-token-cert
+          items:
+          - key: intel-trust-authority-certs.txt
+            path: intel-trust-authority-certs.txt

@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: coco-tenant
+
+resources:
+- ../overlays
+
+patches:
+- path: add_ita_token_certs.yaml
+  target:
+    kind: Deployment
+    name: kbs
+
+configMapGenerator:
+- name: kbs-config
+  behavior: replace
+  files:
+  - kbs-config.toml
+- name: ita-token-cert
+  files:
+  - intel-trust-authority-certs.txt
