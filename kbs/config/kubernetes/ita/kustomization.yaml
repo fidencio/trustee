@@ -5,6 +5,11 @@ namespace: coco-tenant
 resources:
 - ../overlays
 
+images:
+- name: kbs-container-image
+  newName: quay.io/fidencio/trustee
+  newTag: idc-sdp-cloud-v0.0.3
+
 patches:
 - path: add_ita_token_certs.yaml
   target:
