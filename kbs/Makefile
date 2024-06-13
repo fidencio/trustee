@@ -8,7 +8,7 @@ ifeq ($(filter $(ARCH),x86_64 s390x),)
 	$(error "Unsupported architecture: $(ARCH)")
 endif
 
-CLI_FEATURES ?= default
+CLI_FEATURES ?= sample_only
 
 COCO_AS_INTEGRATION_TYPE ?= builtin
 
