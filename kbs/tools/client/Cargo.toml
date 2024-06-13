@@ -27,4 +27,4 @@ tokio.workspace = true
 
 [features]
 default = ["kbs_protocol/default"]
-sample_only = ["kbs_protocol/background_check", "kbs_protocol/passport", "kbs_protocol/rust-crypto"]
+sample_only = ["kbs_protocol/background_check", "kbs_protocol/passport", "kbs_protocol/rust-crypto", "kbs_protocol/tdx-attester"]
