@@ -31,7 +31,7 @@ mod attestation {
 pub const DEFAULT_AS_ADDR: &str = "http://127.0.0.1:50004";
 pub const DEFAULT_POOL_SIZE: u64 = 100;
 
-pub const COCO_AS_HASH_ALGORITHM: &str = "sha384";
+pub const COCO_AS_HASH_ALGORITHM: &str = "sha512";
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct GrpcConfig {
