@@ -28,6 +28,9 @@ spec:
       containers:
       - name: kbs
         image: kbs-container-image
+        env:
+          - name: RUST_LOG
+            value: "debug"
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
