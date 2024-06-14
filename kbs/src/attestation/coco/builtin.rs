@@ -39,9 +39,9 @@ impl Attest for BuiltInCoCoAs {
                 attestation.tee_evidence.into_bytes(),
                 tee,
                 Some(Data::Structured(runtime_data_plaintext)),
-                HashAlgorithm::Sha384,
+                HashAlgorithm::Sha512,
                 None,
-                HashAlgorithm::Sha384,
+                HashAlgorithm::Sha512,
                 vec!["default".into()],
             )
             .await
