@@ -18,7 +18,7 @@ base64.workspace = true
 clap = { version = "4.0.29", features = ["derive"] }
 env_logger.workspace = true
 jwt-simple = "0.11.4"
-kbs_protocol = { git = "https://github.com/mythi/guest-components.git", rev="7b97a8b6d0f53aa5b8b22c79e54892bef65e312a", default-features = false }
+kbs_protocol = { git = "https://github.com/fidencio/guest-components.git", rev = "de7d2bb6a5a5e48644317b2090deeee3ab6aba99", default-features = false, version = "0.1.0" }
 log.workspace = true
 reqwest = { version = "0.12", default-features = false, features = ["cookies", "json"] }
 serde = { version = "1.0", features = ["derive"] }
