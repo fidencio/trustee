@@ -585,7 +585,7 @@ dependencies = [
 [[package]]
 name = "attester"
 version = "0.1.0"
-source = "git+https://github.com/confidential-containers/guest-components.git?rev=df60725afe0ba452a25a740cf460c2855442c49a#df60725afe0ba452a25a740cf460c2855442c49a"
+source = "git+https://github.com/fidencio/guest-components.git?branch=intel/0.9.0-with-ita#0147150119a6393d78f532b54dfe37b20f42666b"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1330,7 +1330,7 @@ checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
 [[package]]
 name = "crypto"
 version = "0.1.0"
-source = "git+https://github.com/confidential-containers/guest-components.git?rev=df60725afe0ba452a25a740cf460c2855442c49a#df60725afe0ba452a25a740cf460c2855442c49a"
+source = "git+https://github.com/fidencio/guest-components.git?branch=intel/0.9.0-with-ita#0147150119a6393d78f532b54dfe37b20f42666b"
 dependencies = [
  "aes-gcm",
  "anyhow",
@@ -2714,7 +2714,7 @@ dependencies = [
 [[package]]
 name = "kbs_protocol"
 version = "0.1.0"
-source = "git+https://github.com/confidential-containers/guest-components.git?rev=df60725afe0ba452a25a740cf460c2855442c49a#df60725afe0ba452a25a740cf460c2855442c49a"
+source = "git+https://github.com/fidencio/guest-components.git?branch=intel/0.9.0-with-ita#0147150119a6393d78f532b54dfe37b20f42666b"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4062,7 +4062,7 @@ dependencies = [
 [[package]]
 name = "resource_uri"
 version = "0.1.0"
-source = "git+https://github.com/confidential-containers/guest-components.git?rev=df60725afe0ba452a25a740cf460c2855442c49a#df60725afe0ba452a25a740cf460c2855442c49a"
+source = "git+https://github.com/fidencio/guest-components.git?branch=intel/0.9.0-with-ita#0147150119a6393d78f532b54dfe37b20f42666b"
 dependencies = [
  "anyhow",
  "serde",
