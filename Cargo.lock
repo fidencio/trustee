@@ -103,7 +103,7 @@ dependencies = [
  "actix-utils",
  "futures-core",
  "futures-util",
- "mio",
+ "mio 0.8.11",
  "socket2",
  "tokio",
  "tracing",
@@ -540,15 +540,16 @@ dependencies = [
 [[package]]
 name = "attester"
 version = "0.1.0"
-source = "git+https://github.com/confidential-containers/guest-components.git?rev=df60725afe0ba452a25a740cf460c2855442c49a#df60725afe0ba452a25a740cf460c2855442c49a"
+source = "git+https://github.com/fidencio/guest-components.git?branch=intel/kata-containers-3.8.0-with-ita#1a5cecea59ebd57b6c1a4295417243ca59ecd97c"
 dependencies = [
  "anyhow",
  "async-trait",
- "az-snp-vtpm",
- "az-tdx-vtpm",
+ "az-snp-vtpm 0.6.0",
+ "az-tdx-vtpm 0.6.0",
  "base64 0.21.7",
  "codicon",
  "csv-rs",
+ "hex",
  "hyper 0.14.28",
  "hyper-tls 0.5.0",
  "kbs-types",
@@ -653,15 +654,50 @@ dependencies = [
 ]
 
 [[package]]
+name = "az-cvm-vtpm"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1940b5a30bbaa585acd365e329c8c4c5c119345fef81830bd5f38f2360caa7d6"
+dependencies = [
+ "bincode",
+ "jsonwebkey",
+ "memoffset",
+ "openssl",
+ "serde",
+ "serde-big-array",
+ "serde_json",
+ "sev",
+ "sha2",
+ "thiserror",
+ "tss-esapi",
+ "zerocopy",
+]
+
+[[package]]
 name = "az-snp-vtpm"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d9da68a854978d9d32cc03ba6cd4a24b1f43fafad91eb7e15578cdf9a9cbdfe7"
 dependencies = [
- "az-cvm-vtpm",
+ "az-cvm-vtpm 0.5.3",
  "bincode",
  "clap 4.5.4",
  "openssl",
+ "serde",
+ "sev",
+ "thiserror",
+ "ureq",
+]
+
+[[package]]
+name = "az-snp-vtpm"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a276bcc39a8cf650ebc32941409f89c751cf8266c67f233872ac8c50ffa5405"
+dependencies = [
+ "az-cvm-vtpm 0.6.0",
+ "bincode",
+ "clap 4.5.4",
  "serde",
  "sev",
  "thiserror",
@@ -674,8 +710,24 @@ version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8575eeaefa72d9591355597f5acf9b4ddee8cc19d8b03d947173ae8fcf1e8c2e"
 dependencies = [
- "az-cvm-vtpm",
- "base64-url",
+ "az-cvm-vtpm 0.5.3",
+ "base64-url 2.0.2",
+ "bincode",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "ureq",
+ "zerocopy",
+]
+
+[[package]]
+name = "az-tdx-vtpm"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb795802e685a153ea4906349c86f5760012478a72e349538dd47012409465de"
+dependencies = [
+ "az-cvm-vtpm 0.6.0",
+ "base64-url 3.0.0",
  "bincode",
  "serde",
  "serde_json",
@@ -730,6 +782,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fb9fb9fb058cc3063b5fc88d9a21eefa2735871498a04e1650da76ed511c8569"
 dependencies = [
  "base64 0.21.7",
+]
+
+[[package]]
+name = "base64-url"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38e2b6c78c06f7288d5e3c3d683bde35a79531127c83b087e5d0d77c974b4b28"
+dependencies = [
+ "base64 0.22.1",
 ]
 
 [[package]]
@@ -1285,7 +1346,7 @@ checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
 [[package]]
 name = "crypto"
 version = "0.1.0"
-source = "git+https://github.com/confidential-containers/guest-components.git?rev=df60725afe0ba452a25a740cf460c2855442c49a#df60725afe0ba452a25a740cf460c2855442c49a"
+source = "git+https://github.com/fidencio/guest-components.git?branch=intel/kata-containers-3.8.0-with-ita#1a5cecea59ebd57b6c1a4295417243ca59ecd97c"
 dependencies = [
  "aes-gcm",
  "anyhow",
@@ -2691,7 +2752,7 @@ dependencies = [
 [[package]]
 name = "kbs_protocol"
 version = "0.1.0"
-source = "git+https://github.com/confidential-containers/guest-components.git?rev=df60725afe0ba452a25a740cf460c2855442c49a#df60725afe0ba452a25a740cf460c2855442c49a"
+source = "git+https://github.com/fidencio/guest-components.git?branch=intel/kata-containers-3.8.0-with-ita#1a5cecea59ebd57b6c1a4295417243ca59ecd97c"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2909,6 +2970,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "mio"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "80e04d1dcff3aae0704555fe5fee3bcfaf3d1fdf8a7e521d5b9d2b42acb52cec"
+dependencies = [
+ "hermit-abi 0.3.9",
+ "libc",
+ "wasi",
+ "windows-sys 0.52.0",
+]
+
+[[package]]
 name = "mobc"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3091,16 +3164,6 @@ checksum = "da0df0e5185db44f69b44f26786fe401b6c293d1907744beaa7fa62b2e5a517a"
 dependencies = [
  "autocfg",
  "libm",
-]
-
-[[package]]
-name = "num_cpus"
-version = "1.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4161fcb6d602d4d2081af7c3a45852d875a03dd337a6bfdd6e06407b61342a43"
-dependencies = [
- "hermit-abi 0.3.9",
- "libc",
 ]
 
 [[package]]
@@ -4028,7 +4091,7 @@ dependencies = [
 [[package]]
 name = "resource_uri"
 version = "0.1.0"
-source = "git+https://github.com/confidential-containers/guest-components.git?rev=df60725afe0ba452a25a740cf460c2855442c49a#df60725afe0ba452a25a740cf460c2855442c49a"
+source = "git+https://github.com/fidencio/guest-components.git?branch=intel/kata-containers-3.8.0-with-ita#1a5cecea59ebd57b6c1a4295417243ca59ecd97c"
 dependencies = [
  "anyhow",
  "serde",
@@ -5105,21 +5168,20 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.37.0"
+version = "1.40.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1adbebffeca75fcfd058afa480fb6c0b81e165a0323f9c9d39c9697e37c46787"
+checksum = "e2b070231665d27ad9ec9b8df639893f46727666c6767db40317fbe920a5d998"
 dependencies = [
  "backtrace",
  "bytes",
  "libc",
- "mio",
- "num_cpus",
+ "mio 1.0.2",
  "parking_lot 0.12.2",
  "pin-project-lite",
  "signal-hook-registry",
  "socket2",
  "tokio-macros",
- "windows-sys 0.48.0",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -5134,9 +5196,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-macros"
-version = "2.2.0"
+version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b8a1e28f2deaa14e508979454cb3a223b10b938b45af148bc0986de36f1923b"
+checksum = "693d596312e88961bc67d7f1f97af8a70227d9f90c31bba5806eec004978d752"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5594,8 +5656,8 @@ dependencies = [
  "asn1-rs",
  "assert-json-diff",
  "async-trait",
- "az-snp-vtpm",
- "az-tdx-vtpm",
+ "az-snp-vtpm 0.5.3",
+ "az-tdx-vtpm 0.5.3",
  "base64 0.21.7",
  "bincode",
  "byteorder",
