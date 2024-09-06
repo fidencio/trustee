@@ -36,6 +36,6 @@ package policy
 default allow = false
 
 allow {
-	input["tee"] != "sample"
+	input["attester_type"] != "sample"
 }
 
