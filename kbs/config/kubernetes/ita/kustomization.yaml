@@ -8,7 +8,7 @@ resources:
 images:
 - name: kbs-container-image
   newName: quay.io/fidencio/trustee
-  newTag: kata-containers-3.8.0-with-ita-v0.0.1
+  newTag: kata-containers-3.8.0-with-ita-v0.0.2
 
 patches:
 - path: add_ita_token_certs.yaml
