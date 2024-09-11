@@ -5,6 +5,11 @@ namespace: coco-tenant
 resources:
 - ../overlays/x86_64
 
+images:
+- name: kbs-container-image
+  newName: quay.io/fidencio/trustee
+  newTag: fidencio-tests
+
 configMapGenerator:
 - name: kbs-config
   behavior: replace
