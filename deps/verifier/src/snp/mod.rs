@@ -54,6 +54,34 @@ pub(crate) fn load_milan_cert_chain() -> &'static Result<VendorCertificates> {
     })
 }
 
+pub(crate) fn fetch_vcek_from_kds(report: &AttestationReport) -> Result<Vec<u8>> {
+    let hw_id: String = hex::encode(report.chip_id);
+
+    let url: String = format!(
+        "https://kdsintf.amd.com/vcek/v1/{}/\
+        {}?blSPL={:02}&teeSPL={:02}&snpSPL={:02}&ucodeSPL={:02}",
+        "Milan",
+        hw_id,
+        report.reported_tcb.bootloader,
+        report.reported_tcb.tee,
+        report.reported_tcb.snp,
+        report.reported_tcb.microcode
+    );
+
+    let response = reqwest::blocking::get(url).context("Unable to send KDS request for the VCEK certificate")?;
+
+    match response.status() {
+        reqwest::StatusCode::OK => {
+            let vcek: Vec<u8> = response
+                .bytes()
+                .context("Unable to parse the downloaded VCEK certificate")?
+                .to_vec();
+            Ok(vcek)
+        },
+        status => Err(anyhow!("Unable to fetch VCEK from KDS URL {:?}", status))
+    }
+}
+
 impl Snp {
     pub fn new() -> Result<Self> {
         let Result::Ok(vendor_certs) = load_milan_cert_chain() else {
@@ -84,8 +112,14 @@ impl Verifier for Snp {
             cert_chain,
         } = serde_json::from_slice(evidence).context("Deserialize Quote failed.")?;
 
-        let Some(cert_chain) = cert_chain else {
-            bail!("Cert chain is unset");
+        let cert_chain: Vec<CertTableEntry> = match cert_chain {
+            None => vec![CertTableEntry::new(CertType::VCEK, fetch_vcek_from_kds(&report)?)],
+            Some(mut cert_chain) => {
+                if !cert_chain.iter().any(|entry| entry.cert_type == CertType::VCEK) {
+                    cert_chain.push(CertTableEntry::new(CertType::VCEK, fetch_vcek_from_kds(&report)?));
+                }
+                cert_chain
+            },
         };
 
         verify_report_signature(&report, &cert_chain, &self.vendor_certs)?;
