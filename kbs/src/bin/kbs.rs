@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
     info!("Using config file {}", cli.config_file);
     let kbs_config = KbsConfig::try_from(Path::new(&cli.config_file))?;
 
-    debug!("Config: {:#?}", kbs_config);
+    debug!("Config (sensitive fields are omitted): {:#?}", kbs_config);
 
     if !kbs_config.insecure_http
         && (kbs_config.private_key.is_none() || kbs_config.certificate.is_none())
