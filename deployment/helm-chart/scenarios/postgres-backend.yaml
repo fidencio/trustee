@@ -1,0 +1,40 @@
+# Fast demo: bundled PostgreSQL + KBS sessions in Memory + Postgres KV backend + shared demo keys.
+#
+# Install (from repo root):
+#   helm upgrade --install trustee ./deployment/helm-chart \
+#     --namespace coco-trustee --create-namespace \
+#     -f ./deployment/helm-chart/scenarios/postgres-backend.yaml
+#
+# Keys: with default `secrets.useEphemeralGeneratedKeys: true`, a Helm hook creates
+# `<release>-bootstrap-user-keys` (Secret keys: KBS_ADMIN_* / AS_TOKEN_*; see README).
+#
+# If Postgres PVC stays Pending (no default StorageClass on your cluster), set one explicitly, e.g.:
+#   helm upgrade --install trustee ./deployment/helm-chart ... \
+#     -f ./deployment/helm-chart/scenarios/postgres-backend.yaml \
+#     --set storageBackend.postgres.internal.persistence.storageClass=<your-cluster-storage-class>
+#
+# Production: pre-create a Secret (see README), set `secrets.useEphemeralGeneratedKeys: false` and `secrets.existingSecretName`.
+#
+# AS image: default GHCR `coco-as-grpc` may lag this tree; scenario uses Docker Hub build that
+# includes current sources (e.g. PostgreSQL table identifier quoting). Override `as.image` anytime.
+#
+# Verify with kbs-client (build: `cargo build -p kbs-client --release`, binary under workspace target).
+# Admin PEM is `private.key` in the `*bootstrap-user-keys` Secret (see `kubectl get secrets -n <ns> | grep bootstrap`).
+# Important: `--auth-private-key` must come immediately after `config`, before the nested subcommand.
+#
+#   kubectl port-forward -n coco-trustee svc/trustee-kbs 8080:8080 &
+#   SECRET=$(kubectl get secrets -n coco-trustee -o name | grep bootstrap-user-keys | head -1 | cut -d/ -f2)
+#   kubectl get secret "$SECRET" -n coco-trustee -o jsonpath='{.data.KBS_ADMIN_PRIVATE_KEY}' | base64 -d >/tmp/kbs-admin.key
+#   kbs-client --url http://127.0.0.1:8080 config --auth-private-key /tmp/kbs-admin.key set-resource-policy --allow-all
+
+sessionStorageType: Memory
+
+storageBackend:
+  type: Postgres
+  postgres:
+    mode: internal
+    internal:
+      # Auto-create a PVC by default (set existingClaim to reuse one).
+      persistence:
+        existingClaim: ""
+        storageClass: ""

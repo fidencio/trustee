@@ -1,0 +1,88 @@
+{{- $pg := (.Values.storageBackend.postgres | default dict) }}
+{{- $pgi := ($pg.internal | default dict) }}
+{{- $initKvTables := (ternary $pgi.initKvTables true (hasKey $pgi "initKvTables")) }}
+{{- if eq (include "coco-trustee.postgres.useBundled" . | trim) "true" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "coco-trustee.names.postgres" . }}
+  labels:
+    {{- include "coco-trustee.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      {{- include "coco-trustee.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: postgres
+        {{- include "coco-trustee.selectorLabels" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: postgres
+          image: "postgres:16-alpine"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              # Required by postgres entrypoint to chmod/chown runtime and data dirs.
+              add:
+                - CHOWN
+                - FOWNER
+                - DAC_OVERRIDE
+                - SETUID
+                - SETGID
+            readOnlyRootFilesystem: false
+          {{- with $pgi.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "coco-trustee.postgres.internalSecretName" . }}
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "coco-trustee.postgres.internalSecretName" . }}
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "coco-trustee.postgres.internalSecretName" . }}
+                  key: POSTGRES_DB
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - name: tcp
+              containerPort: {{ include "coco-trustee.port.postgres" . }}
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            {{- if $initKvTables }}
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+            {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            {{- $existingClaim := (dig "persistence" "existingClaim" "" $pgi) }}
+            claimName: {{ default (include "coco-trustee.names.postgres" .) $existingClaim }}
+        {{- if $initKvTables }}
+        - name: initdb
+          configMap:
+            name: {{ include "coco-trustee.names.postgresInitdb" . }}
+            defaultMode: 0444
+        {{- end }}
+{{- end }}

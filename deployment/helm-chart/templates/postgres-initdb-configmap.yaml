@@ -1,0 +1,36 @@
+{{- $pg := (.Values.storageBackend.postgres | default dict) }}
+{{- $pgi := ($pg.internal | default dict) }}
+{{- $initKvTables := (ternary $pgi.initKvTables true (hasKey $pgi "initKvTables")) }}
+{{- if and (eq (include "coco-trustee.postgres.useBundled" . | trim) "true") $initKvTables }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "coco-trustee.names.postgresInitdb" . }}
+  labels:
+    {{- include "coco-trustee.labels" . | nindent 4 }}
+data:
+  00-trustee-kv.sql: |
+    -- Trustee unified Postgres KV: one table per namespace (key-value-storage).
+    -- Official postgres image runs files in /docker-entrypoint-initdb.d only when the data directory is empty (first init).
+    -- CREATE IF NOT EXISTS keeps re-runs safe if the script is ever executed again.
+    CREATE TABLE IF NOT EXISTS kbs (
+      value BYTEA,
+      key TEXT PRIMARY KEY
+    );
+    CREATE TABLE IF NOT EXISTS repository (
+      value BYTEA,
+      key TEXT PRIMARY KEY
+    );
+    CREATE TABLE IF NOT EXISTS kbs_protocol_session (
+      value BYTEA,
+      key TEXT PRIMARY KEY
+    );
+    CREATE TABLE IF NOT EXISTS attestation_service_policy (
+      value BYTEA,
+      key TEXT PRIMARY KEY
+    );
+    CREATE TABLE IF NOT EXISTS reference_value (
+      value BYTEA,
+      key TEXT PRIMARY KEY
+    );
+{{- end }}

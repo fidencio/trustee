@@ -1,0 +1,22 @@
+{{- $pg := (.Values.storageBackend.postgres | default dict) }}
+{{- $pgi := ($pg.internal | default dict) }}
+{{- $existingClaim := (dig "persistence" "existingClaim" "" $pgi) }}
+{{- if and (eq (include "coco-trustee.postgres.useBundled" . | trim) "true") (eq $existingClaim "") }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "coco-trustee.names.postgres" . }}
+  labels:
+    {{- include "coco-trustee.labels" . | nindent 4 }}
+spec:
+  {{- $accessModes := (dig "persistence" "accessModes" (list "ReadWriteOnce") $pgi) }}
+  accessModes:
+    {{- toYaml $accessModes | nindent 4 }}
+  {{- $pgsc := (dig "persistence" "storageClass" "" $pgi) }}
+  {{- if $pgsc }}
+  storageClassName: {{ $pgsc | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ (dig "persistence" "size" "8Gi" $pgi) | quote }}
+{{- end }}
