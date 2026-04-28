@@ -70,6 +70,16 @@ spec:
             - name: tcp
               containerPort: {{ include "coco-trustee.port.as" . }}
               protocol: TCP
+          readinessProbe:
+            grpc:
+              port: {{ include "coco-trustee.port.as" . }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            grpc:
+              port: {{ include "coco-trustee.port.as" . }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
           {{- with .Values.as.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
