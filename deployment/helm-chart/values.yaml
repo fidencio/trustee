@@ -71,6 +71,13 @@ kbs:
       memory: 512Mi
   resourceRepository: []
 
+  # Extra environment variables to inject into the KBS container.
+  extraEnvVars: []
+  # Extra volumes to attach to the KBS pod.
+  extraVolumes: []
+  # Extra volume mounts for the KBS container.
+  extraVolumeMounts: []
+
 as:
   image:
     repository: ghcr.io/confidential-containers/staged-images/coco-as-grpc
