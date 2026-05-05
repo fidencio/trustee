@@ -1,8 +1,10 @@
+use std::time::Duration;
+
 use mobc::{Manager, Pool};
 use serde::Deserialize;
 use serde_json::Value;
 use tonic::transport::Channel;
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 use self::rvps_api::{
     reference_value_provider_service_client::ReferenceValueProviderServiceClient,
@@ -50,6 +52,7 @@ impl Agent {
         let manager = GrpcManager { address };
         let pool = Pool::builder()
             .max_open(DEFAULT_RVPS_POOL_SIZE)
+            .max_idle_lifetime(Some(Duration::from_secs(30)))
             .build(manager);
 
         // the mobc Pool builder does not establish an actual connection,
@@ -101,6 +104,9 @@ impl Manager for GrpcManager {
 
     async fn connect(&self) -> std::result::Result<Self::Connection, Self::Error> {
         let channel = Channel::from_shared(self.address.clone())?
+            .keep_alive_while_idle(true)
+            .http2_keep_alive_interval(Duration::from_secs(10))
+            .keep_alive_timeout(Duration::from_secs(5))
             .connect()
             .await?;
         Ok(ReferenceValueProviderServiceClient::new(channel))
@@ -110,6 +116,16 @@ impl Manager for GrpcManager {
         &self,
         conn: Self::Connection,
     ) -> std::result::Result<Self::Connection, Self::Error> {
-        Ok(conn)
+        let mut c = conn;
+        let req = tonic::Request::new(ReferenceValueQueryRequest {
+            reference_value_id: String::new(),
+        });
+        match c.query_reference_value(req).await {
+            Ok(_) => Ok(c),
+            Err(e) => {
+                warn!("RVPS connection health check failed, reconnecting: {e}");
+                Err(anyhow::anyhow!("stale connection: {e}"))
+            }
+        }
     }
 }
