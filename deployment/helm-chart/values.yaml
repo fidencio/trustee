@@ -55,7 +55,7 @@ storageBackend:
 kbs:
   image:
     repository: ghcr.io/confidential-containers/staged-images/kbs-grpc-as
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "latest"
   service:
     # Internal KBS Service remains ClusterIP. Set this to true to create an extra external LoadBalancer Service.
@@ -81,7 +81,7 @@ kbs:
 as:
   image:
     repository: ghcr.io/confidential-containers/staged-images/coco-as-grpc
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "latest"
   # When type is non-empty, AS config includes verifier_config.nvidia_verifier (Local or Remote NRAS).
   # Other verifiers (SNP, Intel DCAP) work correctly with their built-in defaults and do not
@@ -105,7 +105,7 @@ as:
 rvps:
   image:
     repository: ghcr.io/confidential-containers/staged-images/rvps
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: "latest"
   service:
     type: ClusterIP
