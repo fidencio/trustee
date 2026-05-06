@@ -120,11 +120,15 @@ impl Manager for GrpcManager {
         let req = tonic::Request::new(ReferenceValueQueryRequest {
             reference_value_id: String::new(),
         });
-        match c.query_reference_value(req).await {
-            Ok(_) => Ok(c),
-            Err(e) => {
+        match tokio::time::timeout(Duration::from_secs(5), c.query_reference_value(req)).await {
+            Ok(Ok(_)) => Ok(c),
+            Ok(Err(e)) => {
                 warn!("RVPS connection health check failed, reconnecting: {e}");
                 Err(anyhow::anyhow!("stale connection: {e}"))
+            }
+            Err(_) => {
+                warn!("RVPS connection health check timed out, reconnecting");
+                Err(anyhow::anyhow!("RVPS health check timed out"))
             }
         }
     }
