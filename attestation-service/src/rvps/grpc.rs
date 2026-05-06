@@ -117,10 +117,13 @@ impl Manager for GrpcManager {
         conn: Self::Connection,
     ) -> std::result::Result<Self::Connection, Self::Error> {
         let mut c = conn;
+        // Use a non-empty placeholder key: RVPS returns Ok(None) for unknown keys,
+        // confirming the connection is live without triggering an "Is a directory"
+        // error that would cause an unnecessary reconnect on every pool.get() call.
         let req = tonic::Request::new(ReferenceValueQueryRequest {
-            reference_value_id: String::new(),
+            reference_value_id: "__healthcheck__".to_string(),
         });
-        match tokio::time::timeout(Duration::from_secs(5), c.query_reference_value(req)).await {
+        match tokio::time::timeout(Duration::from_secs(1), c.query_reference_value(req)).await {
             Ok(Ok(_)) => Ok(c),
             Ok(Err(e)) => {
                 warn!("RVPS connection health check failed, reconnecting: {e}");
