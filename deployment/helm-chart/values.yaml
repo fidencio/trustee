@@ -102,6 +102,9 @@ as:
       cpu: 500m
       memory: 512Mi
 
+  # Extra environment variables for the Attestation Service container (e.g. HTTP(S)_PROXY and NO_PROXY).
+  extraEnvVars: []
+
 rvps:
   image:
     repository: ghcr.io/confidential-containers/staged-images/rvps

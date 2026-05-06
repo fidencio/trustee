@@ -57,6 +57,9 @@ spec:
           env:
             - name: RUST_LOG
               value: {{ .Values.log_level }}
+            {{- with .Values.as.extraEnvVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
             {{- $pgurl := include "coco-trustee.postgresUrlSecretName" . | trim }}
             {{- $needsPostgres := include "coco-trustee.storage.storageBackendIsPostgres" . | trim }}
             {{- if $needsPostgres }}
@@ -75,11 +78,13 @@ spec:
               port: {{ include "coco-trustee.port.as" . }}
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 5
           livenessProbe:
             grpc:
               port: {{ include "coco-trustee.port.as" . }}
             initialDelaySeconds: 15
             periodSeconds: 20
+            timeoutSeconds: 5
           {{- with .Values.as.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
