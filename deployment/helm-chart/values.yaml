@@ -83,6 +83,13 @@ as:
     repository: ghcr.io/confidential-containers/staged-images/coco-as-grpc
     pullPolicy: IfNotPresent
     tag: "latest"
+  # When type is non-empty, AS config includes verifier_config.nvidia_verifier (Local or Remote NRAS).
+  # Other verifiers (SNP, Intel DCAP) work correctly with their built-in defaults and do not
+  # require explicit configuration here.
+  # See attestation-service docs and deps/verifier/src/nvidia/README.md.
+  nvidiaVerifier:
+    type: ""
+    verifierUrl: "https://nras.attestation.nvidia.com/v4/attest"
   service:
     type: ClusterIP
     port: 50004
