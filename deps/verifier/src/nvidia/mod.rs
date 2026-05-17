@@ -268,8 +268,9 @@ impl Nvidia {
             "claims_version": "3.0"
         });
 
-        // We can reuse this client for multiple requests, but for now create a new one.
-        let client = reqwest::Client::new();
+        let client = reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(60))
+            .build()?;
         let res = client.post(request_url).json(&request_json).send().await?;
 
         if !res.status().is_success() {

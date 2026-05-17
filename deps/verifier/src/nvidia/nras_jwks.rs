@@ -18,7 +18,10 @@ pub struct NrasJwks {
 
 impl NrasJwks {
     pub async fn new() -> Result<Self> {
-        let res = reqwest::get(NRAS_JWKS_URL).await?;
+        let client = reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(30))
+            .build()?;
+        let res = client.get(NRAS_JWKS_URL).send().await?;
 
         if !res.status().is_success() {
             bail!(

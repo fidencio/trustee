@@ -239,6 +239,7 @@ impl Manager for GrpcManager {
 
     async fn connect(&self) -> Result<Self::Connection, Self::Error> {
         let connection = Channel::from_shared(self.as_addr.clone())?
+            .timeout(std::time::Duration::from_secs(300))
             .connect()
             .await?;
         let as_rpc = AttestationServiceClient::new(connection.clone());
