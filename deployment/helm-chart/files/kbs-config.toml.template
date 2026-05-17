@@ -14,7 +14,7 @@ type = "coco_as_grpc"
 as_addr = "http://{{ include "coco-trustee.svc.as" . }}:{{ include "coco-trustee.port.as" . }}"
 {{ $att := ((.Values.kbs | default dict).config | default dict).attestationService | default dict }}
 pool_size = {{ default 200 $att.poolSize }}
-timeout = {{ default 5 $att.timeout }}
+timeout = {{ default 30 $att.timeout }}
 
 [admin]
 type = "Simple"
@@ -25,7 +25,7 @@ public_key_path = "/opt/confidential-containers/kbs/user-keys/public.pub"
 
 [[plugins]]
 name = "resource"
-type = "kvstorage"
+storage_backend_type = "kvstorage"
 
 {{- $st := include "coco-trustee.storage.type" . | trim }}
 {{- $sst := include "coco-trustee.kbs.sessionStorageType" . | trim }}
