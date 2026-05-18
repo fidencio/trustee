@@ -8,6 +8,7 @@ insecure_http = true
 
 [attestation_token]
 trusted_certs_paths = ["/opt/confidential-containers/kbs/user-keys/token-cert-chain.pem"]
+insecure_key = true
 
 [attestation_service]
 type = "coco_as_grpc"
