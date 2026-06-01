@@ -18,11 +18,9 @@ pool_size = {{ default 200 $att.poolSize }}
 timeout = {{ default 30 $att.timeout }}
 
 [admin]
-type = "Simple"
-
-[[admin.personas]]
-id = "admin"
-public_key_path = "/opt/confidential-containers/kbs/user-keys/public.pub"
+# Insecure test posture (matches insecure_http / insecure_key above): allow
+# anonymous admin requests so kbs-client can set resources without a token.
+authorization_mode = "InsecureAllowAll"
 
 [[plugins]]
 name = "resource"
