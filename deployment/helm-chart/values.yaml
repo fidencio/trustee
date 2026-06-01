@@ -64,11 +64,11 @@ kbs:
     loadBalancerAnnotations: {}
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 250m
+      memory: 256Mi
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: "2"
+      memory: 2Gi
   resourceRepository: []
 
   # Extra environment variables to inject into the KBS container.
@@ -94,13 +94,17 @@ as:
     type: ClusterIP
     port: 50004
     loadBalancerAnnotations: {}
+  # Attestation is CPU-bound (signature/cert-chain verification, regorus policy
+  # evaluation) and the all-verifier image loads TDX/SGX DCAP and NVIDIA verifier
+  # libraries. Tight limits here caused the pod to be OOMKilled / throttled into
+  # liveness-probe failures mid-/attest, resetting the in-flight gRPC call.
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 1Gi
+    limits:
+      cpu: "4"
+      memory: 4Gi
 
   # Extra environment variables for the Attestation Service container (e.g. HTTP(S)_PROXY and NO_PROXY).
   extraEnvVars: []
@@ -121,8 +125,8 @@ rvps:
       cpu: 100m
       memory: 128Mi
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: "1"
+      memory: 1Gi
 
 # If `secrets.useEphemeralGeneratedKeys` is true, a Helm hook Job generates ephemeral demo keys into a release-scoped Secret.
 # The keygen image is used to generate the demo keys, and the kubectl image is used to create the release-scoped Secret.
